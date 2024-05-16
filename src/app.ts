@@ -1,17 +1,17 @@
-import express from "express"
-import globalErrorHandler  from "./middlewares/globleErrorHandler"
-import userRouter from "./user/userRouter"
+import express from "express";
+import globalErrorHandler from "./middlewares/globleErrorHandler";
+import userRouter from "./user/userRouter";
 
-const app = express()
+const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
-app.get("/", (req, res, next)=> {
-    res.json({message: "Welcome to instagram"})
-})
+app.get("/", (_req, res, _next) => {
+  res.json({ message: "Welcome to instagram" });
+});
 
-app.use("/api/users", userRouter)
+app.use("/api/users", userRouter);
 
-app.use(globalErrorHandler)
+app.use(globalErrorHandler);
 
-export default app
+export default app;

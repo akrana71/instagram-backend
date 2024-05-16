@@ -17,13 +17,15 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const findUser = await userModal.findOne({ email });
-    console.log(findUser);
+    const findUsername = await userModal.findOne({ username });
     if (findUser) {
       const error = createHttpError(
         400,
         "This email is already used for other account!"
       );
       return next(error);
+    } else if (findUsername) {
+      return next(createHttpError(400, "Username already taken"));
     }
   } catch (error) {
     return next(createHttpError(500, "Error while finding user email"));
@@ -42,6 +44,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       password: hashPassowrd,
     });
   } catch (error) {
+    console.log(error);
     return next(createHttpError(500, "Error while creating new user!"));
   }
 
@@ -88,4 +91,22 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { createUser, loginUser };
+const checkUserName = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { username } = await req.body;
+  try {
+    const checkUser = await userModal.findOne({ username });
+    if (checkUser) {
+      return next(createHttpError(404, "Username already taken!"));
+    } else {
+      return res.status(200).json({ message: "Username available" });
+    }
+  } catch (error) {
+    return next(createHttpError(500, "Error while finding username!"));
+  }
+};
+
+export { createUser, loginUser, checkUserName };
